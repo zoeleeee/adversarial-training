@@ -5,6 +5,8 @@ from robustness.datasets import CIFAR
 # results. Read more at https//cox.readthedocs.io.
 from cox.utils import Parameters
 import cox.store
+import numpy as np
+import torch
 
 # Hard-coded dataset, architecture, batch size, workers
 ds = CIFAR('/home/zhuzby/data')
