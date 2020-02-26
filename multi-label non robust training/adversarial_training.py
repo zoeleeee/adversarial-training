@@ -29,9 +29,12 @@ train_args = Parameters(train_kwargs)
 order = np.load('../data/rnd_label_c10_5.npy')
 train_crit = torch.nn.BCELoss()
 def custom_train_loss(logits, targ):
-    targets = order[targ]
+    if torch.cuda.is_available():
+        targets = torch.from_numpy(order[targ.cpu().numpy()]).cuda()
+    else:
+        targets = torch.from_numpy(order[targ.numpy()])
     outputs = torch.sigmoid(logits.float())
-    return train_crit(outputs, targets)
+    return train_crit(outputs.float(), targets.float())
 train_args.custom_train_loss = custom_train_loss
 
 # Fill whatever parameters are missing from the defaults
