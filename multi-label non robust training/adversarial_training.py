@@ -27,7 +27,7 @@ train_kwargs = {
 train_args = Parameters(train_kwargs)
 
 order = np.load('../data/rnd_label_c10_5.npy')
-train_crit = ch.nn.BCELoss()
+train_crit = torch.nn.BCELoss()
 def custom_train_loss(logits, targ):
     targets = order[targ]
     outputs = torch.sigmoid(logits.float())
