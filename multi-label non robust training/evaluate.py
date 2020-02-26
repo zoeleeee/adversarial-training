@@ -3,13 +3,14 @@ from robustness.datasets import CIFAR
 import sys
 import numpy as np
 import os
-from scipy.special import softmax
+from scipy.special import softmax, expit
 
 def check_normal(preds, labels):
 	pred_labels = np.argmax(softmax(preds, axis=-1), axis=-1)
-	print('acc:', np.mean(preds==labels))
+	print('acc:', np.mean(pred_labels==labels))
 
 def check_hamming(scores, labels, t, name):
+	scores = expit(scores)
 	if not os.path.exists('eval/hamming/hamming_labels_{}.npy'.format(nb_res)):
 		idxs = np.arange(10)
 		rep = np.load('rnd_label_c10_5.npy')[idxs].T
