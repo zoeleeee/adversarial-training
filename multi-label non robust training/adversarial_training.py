@@ -37,8 +37,8 @@ train_args.custom_train_loss = custom_train_loss
 # Fill whatever parameters are missing from the defaults
 train_args = defaults.check_and_fill_args(train_args,
                         defaults.TRAINING_ARGS, CIFAR)
-train_args = defaults.check_and_fill_args(train_args,
-                        defaults.PGD_ARGS, CIFAR)
+# train_args = defaults.check_and_fill_args(train_args,
+                        # defaults.PGD_ARGS, CIFAR)
 
 # Train a model
 train.train_model(train_args, m, (train_loader, val_loader), store=out_store)
