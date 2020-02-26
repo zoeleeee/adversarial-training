@@ -50,9 +50,9 @@ def main():
 		_, test_loader = ds.make_loaders(workers=8, batch_size=128)
 		preds, labels = [], []
 		for i, (im, label) in enumerate(test_loader):
-			output = model(im).detach().cpu().numpy()
+			output, _ = model(im)
 			label = label.cpu().numpy()
-			preds = output if len(preds)==0 else np.vstack(preds, output)
+			preds = output.detach().cpu().numpy() if len(preds)==0 else np.vstack(preds, output.detach().cpu().numpy())
 			labels = label if len(labels)==0 else np.hstack(labels, label)
 		np.save('eval/pred_{}.npy'.format(path.split('/')[-1][:-4]), preds)
 		np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-4]), labels)
