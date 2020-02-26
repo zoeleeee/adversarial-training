@@ -11,7 +11,7 @@ def check_normal(preds, labels):
 
 def check_hamming(scores, labels, t, name):
 	scores = expit(scores)
-	if not os.path.exists('eval/hamming/hamming_labels_{}.npy'.format(nb_res)):
+	if not os.path.exists('eval/hamming/hamming_labels_{}.npy'.format(name)):
 		idxs = np.arange(10)
 		rep = np.load('rnd_label_c10_5.npy')[idxs].T
 		samples = np.array([[1 if u >= 0.5 else 0 for u in v] for v in preds])
@@ -32,8 +32,8 @@ def check_hamming(scores, labels, t, name):
 		preds = np.array(preds)
 		preds_dist = np.array(preds_dist)
 	else:
-		preds = np.load('_models/hamming_labels_{}.npy'.format(nb_res))
-		preds_dist = np.load('_models/hamming_labels_dists_{}.npy'.format(nb_res))
+		preds = np.load('_models/hamming_labels_{}.npy'.format(name))
+		preds_dist = np.load('_models/hamming_labels_dists_{}.npy'.format(name))
 	print('avg Hamming distance:{}, max:{}, min:{}, med:{}'.format(np.mean(preds_dist), np.max(preds_dist), np.min(preds_dist), np.median(preds_dist)))
 	print(t, 'acc:', np.sum(preds_dist[preds == labels] < t) / len(labels))
 	print(t, 'acc:', np.sum(preds_dist[preds != labels] < t) / len(labels))
