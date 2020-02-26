@@ -26,7 +26,8 @@ train_kwargs = {
 }
 train_args = Parameters(train_kwargs)
 
-order = np.load('../data/rnd_label_c10_5.npy')
+idx = np.arange(10)
+order = np.load('../data/rnd_label_c10_5.npy')[idx].T
 train_crit = torch.nn.BCELoss()
 def custom_train_loss(logits, targ):
     if torch.cuda.is_available():
