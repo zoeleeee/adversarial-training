@@ -14,7 +14,7 @@ def check_hamming(scores, labels, t, name):
 	if not os.path.exists('eval/hamming/hamming_labels_{}.npy'.format(name)):
 		idxs = np.arange(10)
 		rep = np.load('../data/rnd_label_c10_5.npy')[idxs].T
-		samples = np.array([[1 if u >= 0.5 else 0 for u in v] for v in preds])
+		samples = np.array([[1 if u >= 0.5 else 0 for u in v] for v in scores])
 		preds, preds_dist, preds_score = [], [], []
 		for i in np.arange(pred_labels.shape[0]):
 			_pred = np.repeat(samples[i].reshape((-1, len(samples[i]))), rep.shape[0], axis=0)
