@@ -12,7 +12,7 @@ m, _ = model_utils.make_and_restore_model(arch='resnet50', dataset=ds)
 train_loader, val_loader = ds.make_loaders(batch_size=128, workers=8)
 
 # Create a cox store for logging
-out_store = cox.store.Store(OUT_DIR)
+out_store = cox.store.Store('coxx')
 
 # Hard-coded base parameters
 train_kwargs = {
