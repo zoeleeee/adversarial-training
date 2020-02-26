@@ -17,13 +17,20 @@ out_store = cox.store.Store('coxx')
 # Hard-coded base parameters
 train_kwargs = {
     'out_dir': "train_out",
-    'adv_train': 1,
-    'constraint': '2',
-    'eps': 0.5,
-    'attack_lr': 1.5,
-    'attack_steps': 20
+    'adv_train': 0,
+    'lr': .01,
+    'epochs': 100,
+    'save-ckpt-iters': 10
 }
 train_args = Parameters(train_kwargs)
+
+order = np.load('../data/rnd_label_c10_5.npy')
+train_crit = ch.nn.BCELoss()
+def custom_train_loss(logits, targ):
+	targets = order[targ]
+	outputs = torch.sigmoid(logits.float())
+    return train_crit(outputs, targets)
+train_args.custom_train_loss = custom_train_loss
 
 # Fill whatever parameters are missing from the defaults
 train_args = defaults.check_and_fill_args(train_args,
