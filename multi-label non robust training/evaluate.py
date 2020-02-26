@@ -32,8 +32,8 @@ def check_hamming(scores, labels, t, name):
 		preds = np.array(preds)
 		preds_dist = np.array(preds_dist)
 	else:
-		preds = np.load('_models/hamming_labels_{}.npy'.format(name))
-		preds_dist = np.load('_models/hamming_labels_dists_{}.npy'.format(name))
+		preds = np.load('eval/hamming/hamming_labels_{}.npy'.format(name))
+		preds_dist = np.load('eval/hamming/hamming_labels_dists_{}.npy'.format(name))
 	print('avg Hamming distance:{}, max:{}, min:{}, med:{}'.format(np.mean(preds_dist), np.max(preds_dist), np.min(preds_dist), np.median(preds_dist)))
 	print(t, 'acc:', np.sum(preds_dist[preds == labels] < t) / len(labels))
 	print(t, 'acc:', np.sum(preds_dist[preds != labels] < t) / len(labels))
