@@ -59,9 +59,9 @@ def main():
 		preds = np.load('eval/pred_{}.npy'.format(path.split('/')[-1][:-4]))
 		labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-4]))
 
-	if metrics = 'origin':
+	if metrics == 'origin':
 		check_normal(preds, labels)
-	elif metrics = 'hamming':
+	elif metrics == 'hamming':
 		check_hamming(preds, labels, int(sys.argv[-3]), path.split('/')[-1][:-4])
 
 
