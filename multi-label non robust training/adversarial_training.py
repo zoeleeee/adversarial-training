@@ -21,7 +21,7 @@ train_kwargs = {
     'out_dir': "train_out",
     'adv_train': 0,
     'lr': .01,
-    'epochs': 100,
+    'epochs': 300,
     'save-ckpt-iters': 10
 }
 train_args = Parameters(train_kwargs)
