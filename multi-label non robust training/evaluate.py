@@ -50,7 +50,7 @@ def main():
 		name+= '_advs'
 
 	if not os.path.exists('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-4])):
-		ds = CIFAR('/home/zhuzby/data')
+		ds = CIFAR('/opt/harry/data')
 		model, _ = make_and_restore_model(arch='resnet50', dataset=ds, resume_path=path)
 		model = model.eval()
 		if sys.argv[-3].startswith('advs'):
