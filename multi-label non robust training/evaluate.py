@@ -55,6 +55,7 @@ def main():
 		model = model.eval()
 		if sys.argv[-3].startswith('advs'):
 			im_adv = np.load(sys.argv[-3])
+
 			preds, _ = model(torch.from_numpy(im_adv).cuda())
 			np.save('eval/pred_advs_{}.npy'.format(path.split('/')[-1][:-4]), preds.detach().cpu().numpy())
 		else:
