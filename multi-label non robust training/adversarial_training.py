@@ -1,5 +1,5 @@
 from robustness import model_utils, datasets, train, defaults
-from robustness.datasets import CIFAR
+from datasets import CIFAR, CustomCIFAR
 from robustness.loaders import LambdaLoader
 # We use cox (http://github.com/MadryLab/cox) to log, store and analyze
 # results. Read more at https//cox.readthedocs.io.
@@ -21,11 +21,11 @@ def label_permutate(ims, labels):
     return ims, new_labels
 
 # Hard-coded dataset, architecture, batch size, workers
-ds = CIFAR('/home/zhuzby/data')
+ds = CustomCIFAR(label_dim, '/home/zhuzby/data')
 m, _ = model_utils.make_and_restore_model(arch='resnet50', dataset=ds)
 train_loader, val_loader = ds.make_loaders(batch_size=128, workers=8)
-train_loader = LambdaLoader(train_loader, label_permutate)
-val_loader = LambdaLoader(val_loader, label_permutate)
+# train_loader = LambdaLoader(train_loader, label_permutate)
+# val_loader = LambdaLoader(val_loader, label_permutate)
 # Create a cox store for logging
 out_store = cox.store.Store('coxx')
 
