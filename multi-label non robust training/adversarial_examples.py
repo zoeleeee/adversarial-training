@@ -14,9 +14,7 @@ model, _ = make_and_restore_model(arch='resnet50', dataset=ds,
              resume_path='../trained_models/cifar_linf_8.pt')
 model.eval()
 
-_, test_loader = ds.make_loaders(workers=8,
-                                    batch_size=128)
-_, (im, label) = next(enumerate(test_loader))
+_, test_loader = ds.make_loaders(workers=8, batch_size=128, shuffle_val=False)
 
 kwargs = {
     'constraint':'2', # use L2-PGD
