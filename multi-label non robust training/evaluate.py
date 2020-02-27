@@ -44,27 +44,36 @@ def main():
 	path = sys.argv[-1]
 	metrics = sys.argv[-2]
 
-	if not os.path.exists('eval/pred_{}.npy'.format(path.split('/')[-1][:-4])):
+	name = 'pred'
+	if sys.argv[-3].startswith('advs'):
+		name+= '_advs'
+
+	if not os.path.exists('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-4])):
 		ds = CIFAR('/home/zhuzby/data')
 		model, _ = make_and_restore_model(arch='resnet50', dataset=ds, resume_path=path)
 		model = model.eval()
-		_, test_loader = ds.make_loaders(workers=8, batch_size=128)
-		preds, labels = [], []
-		for i, (im, label) in enumerate(test_loader):
-			output, _ = model(im)
-			label = label.cpu().numpy()
-			preds = output.detach().cpu().numpy() if len(preds)==0 else np.vstack((preds, output.detach().cpu().numpy()))
-			labels = label if len(labels)==0 else np.hstack((labels, label))
-		np.save('eval/pred_{}.npy'.format(path.split('/')[-1][:-4]), preds)
-		np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-4]), labels)
+		if sys.argv[-3].startswith('advs'):
+			im_adv = np.load(sys.argv[-3])
+			preds, _ = model(im_adv)
+			np.save('eval/pred_advs_{}.npy'.format(path.split('/')[-1][-3]), preds.detach().cpu().numpy())
+		else:
+			_, test_loader = ds.make_loaders(workers=8, batch_size=128)
+			preds, labels = [], []
+			for i, (im, label) in enumerate(test_loader):
+				output, _ = model(im)
+				label = label.cpu().numpy()
+				preds = output.detach().cpu().numpy() if len(preds)==0 else np.vstack((preds, output.detach().cpu().numpy()))
+				labels = label if len(labels)==0 else np.hstack((labels, label))
+			np.save('eval/pred_{}.npy'.format(path.split('/')[-1][:-4]), preds)
+			np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-4]), labels)
 	else:
-		preds = np.load('eval/pred_{}.npy'.format(path.split('/')[-1][:-4]))
+		preds = np.load('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-4]))
 		labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-4]))
 
 	if metrics == 'origin':
 		check_normal(preds, labels)
 	elif metrics == 'hamming':
-		check_hamming(preds, labels, int(sys.argv[-3]), path.split('/')[-1][:-4])
+		check_hamming(preds, labels, int(sys.argv[-4]), path.split('/')[-1][:-4])
 
 
 
