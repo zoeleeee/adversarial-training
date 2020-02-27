@@ -7,7 +7,7 @@ import numpy as np
 ATTACK_EPS = eval(sys.argv[-1])
 ATTACK_STEPS = int(sys.argv[-2])
 ATTACK_STEPSIZE = 2.5*ATTACK_EPS/ATTACK_STEPS
-
+CONSTRAINT = sys.argv(-3)
 
 ds = CIFAR('/opt/harry/data')
 model, _ = make_and_restore_model(arch='resnet50', dataset=ds,
@@ -17,7 +17,7 @@ model.eval()
 _, test_loader = ds.make_loaders(workers=8, batch_size=128, shuffle_val=False)
 
 kwargs = {
-    'constraint':'2', # use L2-PGD
+    'constraint': CONSTRAINT, # use L2-PGD
     'eps': ATTACK_EPS, # L2 radius around original image
     'step_size': ATTACK_STEPSIZE,
     'iterations': ATTACK_STEPS,
