@@ -24,8 +24,11 @@ kwargs = {
     'do_tqdm': True,
 }
 
-_, im_adv = model(im, label, make_adv=True, **kwargs)
-np.save('adv_exs.npy', im_adv)
+advs = []
+for im, label in test_loader:
+	_, im_adv = model(im, label, make_adv=True, **kwargs)
+	advs.append(im_adv.cpu().numpy())
+np.save('advs/adv_exs.npy', im_adv)
 
 
 # from robustness.tools.vis_tools import show_image_row
