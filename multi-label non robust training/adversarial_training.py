@@ -1,18 +1,31 @@
 from robustness import model_utils, datasets, train, defaults
 from robustness.datasets import CIFAR
-
+from robustness.loaders import LambdaLoader
 # We use cox (http://github.com/MadryLab/cox) to log, store and analyze
 # results. Read more at https//cox.readthedocs.io.
 from cox.utils import Parameters
 import cox.store
 import numpy as np
 import torch
+import sys
+
+label_dim = int(sys.argv[-1])
+
+def label_permutate(ims, labels):
+    idx = np.arange(label_dim)
+    order = np.load('../data/rnd_label_c10_5.npy')[idx].T
+    if torch.cuda.is_available():
+        new_labels = torch.from_numpy(order[labels.cpu().numpy()]).cuda()
+    else:
+        new_labels = torch.from_numpy(order[labels.numpy()])
+    return ims, new_labels
 
 # Hard-coded dataset, architecture, batch size, workers
 ds = CIFAR('/home/zhuzby/data')
 m, _ = model_utils.make_and_restore_model(arch='resnet50', dataset=ds)
 train_loader, val_loader = ds.make_loaders(batch_size=128, workers=8)
-
+train_loader = LambdaLoader(train_loader, label_permutate)
+val_loader = LambdaLoader(val_loader, label_permutate)
 # Create a cox store for logging
 out_store = cox.store.Store('coxx')
 
@@ -26,16 +39,12 @@ train_kwargs = {
 }
 train_args = Parameters(train_kwargs)
 
-idx = np.arange(10)
-order = np.load('../data/rnd_label_c10_5.npy')[idx].T
+
+
 train_crit = torch.nn.BCELoss()
 def custom_train_loss(logits, targ):
-    if torch.cuda.is_available():
-        targets = torch.from_numpy(order[targ.cpu().numpy()]).cuda()
-    else:
-        targets = torch.from_numpy(order[targ.numpy()])
     outputs = torch.sigmoid(logits.float())
-    return train_crit(outputs.float(), targets.float())
+    return train_crit(outputs.float(), targ.float())
 train_args.custom_train_loss = custom_train_loss
 
 # Fill whatever parameters are missing from the defaults
