@@ -344,7 +344,7 @@ class CustomCIFAR(DataSet):
             'transform_train': da.TRAIN_TRANSFORMS_DEFAULT(32),
             'transform_test': da.TEST_TRANSFORMS_DEFAULT(32)
         }
-        super(CIFAR, self).__init__('cifar', data_path, **ds_kwargs)
+        super(CustomCIFAR, self).__init__('custom_cifar', data_path, **ds_kwargs)
 
     def get_model(self, arch, pretrained):
         """
