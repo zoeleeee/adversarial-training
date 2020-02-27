@@ -1,15 +1,17 @@
 import torch as ch
 from robustness.datasets import CIFAR
 from robustness.model_utils import make_and_restore_model
+import sys
+import numpy as np
 
-ATTACK_EPS = float(sys.argv[-1])
-ATTACK_STEPS = int(sys.argv[-1])
-ATTACK_STEPSIZE = 2.5*ATTACK_EPS/ATTACK_STEPSIZE
+ATTACK_EPS = eval(sys.argv[-1])
+ATTACK_STEPS = int(sys.argv[-2])
+ATTACK_STEPSIZE = 2.5*ATTACK_EPS/ATTACK_STEPS
 
 
 ds = CIFAR('/opt/harry/data')
 model, _ = make_and_restore_model(arch='resnet50', dataset=ds,
-             resume_path='trained_models')
+             resume_path='../trained_models/cifar_linf_8.pt')
 model.eval()
 
 _, test_loader = ds.make_loaders(workers=8,
