@@ -7,11 +7,12 @@ import numpy as np
 ATTACK_EPS = eval(sys.argv[-1])
 ATTACK_STEPS = int(sys.argv[-2])
 ATTACK_STEPSIZE = 2.5*ATTACK_EPS/ATTACK_STEPS
-CONSTRAINT = sys.argv(-3)
+CONSTRAINT = sys.argv[-3]
+model_path = sys.argv[-4]
 
 ds = CIFAR('/opt/harry/data')
 model, _ = make_and_restore_model(arch='resnet50', dataset=ds,
-             resume_path='../trained_models/cifar_linf_8.pt')
+             resume_path=model_path)
 model.eval()
 
 _, test_loader = ds.make_loaders(workers=8, batch_size=128, shuffle_val=False)
@@ -31,7 +32,7 @@ for im, label in test_loader:
 		advs = im_adv.cpu().numpy()
 	else:
 		advs = np.vstack((advs, im_adv.cpu().numpy()))
-np.save('advs/adv_exs.npy', advs)
+np.save('advs/adv_l{}_{}_{}.npy'.format(CONSTRAINT, ATTACK_STEPS, ATTACK_EPS), advs)
 
 
 # from robustness.tools.vis_tools import show_image_row

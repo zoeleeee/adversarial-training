@@ -46,12 +46,12 @@ def main():
 	path = sys.argv[-1]
 	metrics = sys.argv[-2]
 
-	labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-4]))
+	labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-3]))
 	name = 'pred'
 	if sys.argv[-3].startswith('advs'):
 		name+= '_advs'
 
-	if not os.path.exists('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-4])):
+	if not os.path.exists('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3])):
 		ds = CIFAR('/opt/harry/data')
 		model, _ = make_and_restore_model(arch='resnet50', dataset=ds, resume_path=path)
 		model = model.eval()
@@ -67,15 +67,15 @@ def main():
 			label = label.cpu().numpy()
 			preds = output.detach().cpu().numpy() if len(preds)==0 else np.vstack((preds, output.detach().cpu().numpy()))
 			labels = label if len(labels)==0 else np.hstack((labels, label))
-		np.save('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-4]), preds)
-		np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-4]), labels)
+		np.save('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3]), preds)
+		np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-3]), labels)
 	else:
-		preds = np.load('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-4]))
+		preds = np.load('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3]))
 
 	if metrics == 'origin':
 		check_normal(preds, labels)
 	elif metrics == 'hamming':
-		check_hamming(preds, labels, int(sys.argv[-4]), path.split('/')[-1][:-4])
+		check_hamming(preds, labels, int(sys.argv[-4]), path.split('/')[-1][:-3])
 
 
 
