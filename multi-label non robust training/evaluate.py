@@ -56,8 +56,8 @@ def main():
 		model = model.eval()
 		if sys.argv[-3].startswith('advs'):
 			im_adv = np.load(sys.argv[-3])
-			labels = np.load(os.path.join(sys.argv[-3].split('/')[0], 'labels_'+sys.argv[-3].split('/')[1]))
-			data = TensorDataset(torch.tensor(im_adv), torch.tensor(labels))
+			labs = np.load(os.path.join(sys.argv[-3].split('/')[0], 'labels_'+sys.argv[-3].split('/')[1]))
+			data = TensorDataset(torch.tensor(im_adv), torch.tensor(labs))
 			test_loader = DataLoader(data, batch_size=128, num_workers=8, shuffle=False)
 		else:
 			_, test_loader = ds.make_loaders(workers=8, batch_size=128)
