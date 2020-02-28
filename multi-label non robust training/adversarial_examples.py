@@ -26,13 +26,13 @@ kwargs = {
 }
 
 advs = []
+labels = []
 for im, label in test_loader:
 	_, im_adv = model(im, label, make_adv=True, **kwargs)
-	if len(advs) == 0:
-		advs = im_adv.cpu().numpy()
-	else:
-		advs = np.vstack((advs, im_adv.cpu().numpy()))
+	advs = im_adv.cpu().numpy() if len(advs)==0 else np.vstack((advs, im_adv.cpu().numpy()))
+	labels = label.cpu().numpy() if len(labels) == 0 else np.vstack((labels, label.cpu().numpy()))
 np.save('advs/adv_l{}_{}_{}.npy'.format(CONSTRAINT, ATTACK_STEPS, ATTACK_EPS), advs)
+np.save('advs/labels_adv_l{}_{}_{}.npy'.format(CONSTRAINT, ATTACK_STEPS, ATTACK_EPS), advs)
 
 
 # from robustness.tools.vis_tools import show_image_row

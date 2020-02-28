@@ -46,7 +46,6 @@ def main():
 	path = sys.argv[-1]
 	metrics = sys.argv[-2]
 
-	labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-3]))
 	name = 'pred'
 	if sys.argv[-3].startswith('advs'):
 		name+= '_advs'
@@ -57,6 +56,7 @@ def main():
 		model = model.eval()
 		if sys.argv[-3].startswith('advs'):
 			im_adv = np.load(sys.argv[-3])
+			labels = np.load(os.path.join(sys.argv[-3].split('/')[0], 'labels_'+sys.argv[-3].split('/')[1]))
 			data = TensorDataset(torch.tensor(im_adv), torch.tensor(labels))
 			test_loader = DataLoader(data, batch_size=128, num_workers=8, shuffle=False)
 		else:
@@ -71,6 +71,7 @@ def main():
 		np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-3]), labels)
 	else:
 		preds = np.load('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3]))
+		labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-3]), labels)
 
 	if metrics == 'origin':
 		check_normal(preds, labels)
