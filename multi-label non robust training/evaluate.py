@@ -1,5 +1,5 @@
 from robustness.model_utils import make_and_restore_model
-from robustness.datasets import CIFAR
+from robustness.datasets import CIFAR, CustomCIFAR
 import sys
 import numpy as np
 import os
@@ -52,7 +52,7 @@ def main():
 
 	if not os.path.exists('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3])):
 		if path.endswith('_best.pt'):
-			ds = CustomCIFAR(label_dim, '/home/zhuzby/data')
+			ds = CustomCIFAR(int(path.split('/')[-1].split('_')[0]), '/home/zhuzby/data')
 		else:
 			ds = CIFAR('/home/zhuzby/data')
 		model, _ = make_and_restore_model(arch='resnet50', dataset=ds, resume_path=path)
@@ -74,7 +74,7 @@ def main():
 		np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-3]), labels)
 	else:
 		preds = np.load('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3]))
-		labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-3]), labels)
+		labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-3]))
 
 	if metrics == 'origin':
 		check_normal(preds, labels)
