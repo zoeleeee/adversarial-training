@@ -14,7 +14,7 @@ def check_normal(preds, labels):
 def check_hamming(dim, scores, labels, t, name):
 	scores = expit(scores)
 	if not os.path.exists('eval/hamming/hamming_labels_{}.npy'.format(name)):
-		idxs = np.arange(10)
+		idxs = np.arange(dim)
 		rep = np.load('../data/rnd_label_c10_5.npy')
 		samples = np.array([[1 if u >= 0.5 else 0 for u in v] for v in scores])
 		preds, preds_dist, preds_score = [], [], []
