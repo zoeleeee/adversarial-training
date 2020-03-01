@@ -9,8 +9,12 @@ ATTACK_STEPS = int(sys.argv[-2])
 ATTACK_STEPSIZE = 2.5*ATTACK_EPS/ATTACK_STEPS
 CONSTRAINT = sys.argv[-3]
 model_path = sys.argv[-4]
+label_dim = int(sys.argv[-5])
 
-ds = CIFAR('/opt/harry/data')
+if label_dim > 0:
+	ds = CustomCIFAR(label_dim, '/home/zhuzby/data')
+else:
+	ds = CIFAR('/opt/harry/data')
 model, _ = make_and_restore_model(arch='resnet50', dataset=ds,
              resume_path=model_path)
 model.eval()
@@ -23,7 +27,20 @@ kwargs = {
     'step_size': ATTACK_STEPSIZE,
     'iterations': ATTACK_STEPS,
     'do_tqdm': True,
+    # 'custom_loss': custrom_train_loss,
 }
+
+# idx = np.arange(label_dim)
+# order = np.load('../data/rnd_label_c10_5.npy')[idx].T
+# train_crit = torch.nn.BCELoss()
+# def custom_train_loss(logits, targ):
+#     if torch.cuda.is_available():
+#         targets = torch.from_numpy(order[targ.cpu().numpy()]).cuda()
+#     else:
+#         targets = torch.from_numpy(order[targ.numpy()])
+#     outputs = torch.sigmoid(logits.float())
+#     return train_crit(outputs.float(), targets.float())
+# train_args.custom_train_loss = custom_train_loss
 
 advs = []
 labels = []
