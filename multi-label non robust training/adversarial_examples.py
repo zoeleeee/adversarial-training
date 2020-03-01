@@ -49,7 +49,7 @@ for im, label in test_loader:
 	advs = im_adv.cpu().numpy() if len(advs)==0 else np.vstack((advs, im_adv.cpu().numpy()))
 	labels = label.cpu().numpy() if len(labels) == 0 else np.hstack((labels, label.cpu().numpy()))
 np.save('advs/adv_l{}_{}_{}.npy'.format(CONSTRAINT, ATTACK_STEPS, ATTACK_EPS), advs)
-np.save('advs/labels_adv_l{}_{}_{}.npy'.format(CONSTRAINT, ATTACK_STEPS, ATTACK_EPS), advs)
+np.save('advs/labels_adv_l{}_{}_{}.npy'.format(CONSTRAINT, ATTACK_STEPS, ATTACK_EPS), labels)
 
 
 # from robustness.tools.vis_tools import show_image_row
