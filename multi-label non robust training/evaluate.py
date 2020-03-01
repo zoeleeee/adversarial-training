@@ -4,6 +4,8 @@ import sys
 import numpy as np
 import os
 from scipy.special import softmax, expit
+import torch
+from torch.utils.data import TensorDataset, DataLoader
 
 def check_normal(preds, labels):
 	pred_labels = np.argmax(softmax(preds, axis=-1), axis=-1)
@@ -44,27 +46,40 @@ def main():
 	path = sys.argv[-1]
 	metrics = sys.argv[-2]
 
-	if not os.path.exists('eval/pred_{}.npy'.format(path.split('/')[-1][:-4])):
-		ds = CIFAR('/home/zhuzby/data')
+	name = 'pred'
+	if sys.argv[-3].startswith('advs'):
+		name+= '_advs'
+
+	if not os.path.exists('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3])):
+		if path.endswith('_best.pt'):
+			ds = CustomCIFAR(label_dim, '/home/zhuzby/data')
+		else:
+			ds = CIFAR('/home/zhuzby/data')
 		model, _ = make_and_restore_model(arch='resnet50', dataset=ds, resume_path=path)
 		model = model.eval()
-		_, test_loader = ds.make_loaders(workers=8, batch_size=128)
+		if sys.argv[-3].startswith('advs'):
+			im_adv = np.load(sys.argv[-3])
+			labs = np.load(os.path.join(sys.argv[-3].split('/')[0], 'labels_'+sys.argv[-3].split('/')[1]))
+			data = TensorDataset(torch.tensor(im_adv), torch.tensor(labs))
+			test_loader = DataLoader(data, batch_size=128, num_workers=8, shuffle=False)
+		else:
+			_, test_loader = ds.make_loaders(workers=8, batch_size=128)
 		preds, labels = [], []
 		for i, (im, label) in enumerate(test_loader):
 			output, _ = model(im)
 			label = label.cpu().numpy()
 			preds = output.detach().cpu().numpy() if len(preds)==0 else np.vstack((preds, output.detach().cpu().numpy()))
 			labels = label if len(labels)==0 else np.hstack((labels, label))
-		np.save('eval/pred_{}.npy'.format(path.split('/')[-1][:-4]), preds)
-		np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-4]), labels)
+		np.save('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3]), preds)
+		np.save('eval/label_{}.npy'.format(path.split('/')[-1][:-3]), labels)
 	else:
-		preds = np.load('eval/pred_{}.npy'.format(path.split('/')[-1][:-4]))
-		labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-4]))
+		preds = np.load('eval/{}_{}.npy'.format(name, path.split('/')[-1][:-3]))
+		labels = np.load('eval/label_{}.npy'.format(path.split('/')[-1][:-3]), labels)
 
 	if metrics == 'origin':
 		check_normal(preds, labels)
 	elif metrics == 'hamming':
-		check_hamming(preds, labels, int(sys.argv[-3]), path.split('/')[-1][:-4])
+		check_hamming(preds, labels, int(sys.argv[-4]), path.split('/')[-1][:-3])
 
 
 
