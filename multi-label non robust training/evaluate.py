@@ -11,7 +11,7 @@ def check_normal(preds, labels):
 	pred_labels = np.argmax(softmax(preds, axis=-1), axis=-1)
 	print('acc:', np.mean(pred_labels==labels))
 
-def check_hamming(scores, labels, t, name):
+def check_hamming(dim, scores, labels, t, name):
 	scores = expit(scores)
 	if not os.path.exists('eval/hamming/hamming_labels_{}.npy'.format(name)):
 		idxs = np.arange(10)
@@ -79,7 +79,7 @@ def main():
 	if metrics == 'origin':
 		check_normal(preds, labels)
 	elif metrics == 'hamming':
-		check_hamming(preds, labels, int(sys.argv[-4]), path.split('/')[-1][:-3])
+		check_hamming(int(path.split('/')[-1].split('_')[0]), preds, labels, int(sys.argv[-4]), path.split('/')[-1][:-3])
 
 
 
